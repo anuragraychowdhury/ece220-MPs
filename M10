@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
  
-/* Name: Adam Shore
-* Partner: anuragr3
+/* Name: Anurag Ray Chowdhury
+* Partner: ajshore2
 *
 * Intro Paragraph:
 * This program stores a 2D matrix as a linked list of non-zero elements.
