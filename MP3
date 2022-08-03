@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+ 
+//anuragr3 and ajshore2
+ 
+int main()
+{
+  int row; //row to enter in pascals triangle
+ 
+  printf("Enter a row index: ");
+  scanf("%d",&row); // asks for row and takes user input
+ 
+  int r = row; // row value set to r for the sake of calculation
+  int k = 0; // k always starts at 0 in the combination equation
+ 
+  int rmk; //r minus k value that will be put in factorial later
+ 
+  int rfact; // r factorial
+  int kfact; // k factorial
+  int rkfact; // r minus k factorial -> created a variable for every factorial in the equation
+ 
+  int coef; // where the result is stored
+ 
+  for (k;k<=r;k++) // loop will continue to find values for k as long as it is less than or equal to row #
+   {
+     rmk = r-k; //subtracts r and k
+     rfact = r; // the factorial of r is set as r
+     kfact = k; // the factorial of k is set as k
+     rkfact = rmk; // the factorial of r-k is set as rmk
+ 
+     int rdec = r; // int values for decrementing r
+     int kdec = k;// int values for decrementing k
+     int rkdec = rmk;// int values for decrementing r-k
+ 
+     if (r<=1) // logic for factorials (same logic used in all if else loops for different equation values)
+     {
+       rfact = 1; //0 factorial is 1
+ 
+     }
+   else
+     {
+       for(int i=0;i<r-1;i++) // continues factorial loop until the rfact reaches the row #
+       {
+          rdec--; // decrements r
+          rfact = rfact*rdec; //actual r fact value
+     } 
+ }
+ 
+     //THE SAME LOGIC IS USED IN THE NEXT TWO LOOPS AS THE LOGIC IN THE LOOP ABOVE REGARDING R FACTORIAL
+ 
+if(k<=1)
+   {
+     kfact = 1;
+   }
+else
+   {
+     for(int i=0;i<k-1;i++)
+       {
+       kdec--;
+       kfact = kfact*kdec;
+       }
+   }
+ 
+if (rmk<=1)
+   {
+     rkfact = 1;
+   }
+else
+{
+  for (int i=0;i<rmk-1;i++)
+    {
+      rkdec--;
+      rkfact = rkfact*rkdec;
+    }
+}
+ 
+coef = rfact/(kfact*rkfact); // equation used to find result sotred into coef
+printf("%d ", coef); // prints the result to screen
+ 
+ 
+}
+ 
+  printf("\n"); //prints them all next to eachother
+ return 0;
+ 
+}
