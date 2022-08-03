@@ -1,0 +1,330 @@
+
+#ifndef SHAPE_H_
+#define SHAPE_H_
+ 
+#include<iostream>
+#include<cmath>
+#include<string>
+#include<algorithm>
+#include<list>
+#include<fstream>
+#include <iomanip>   
+ 
+using namespace std;
+ 
+ 
+/* Name: Adam Shore
+* Netid: ajshore2
+* Partner: anuragr3
+* Intro: FFor this mp I utilized the provided outlines for each function. For each of the
+* functions involving one of the shapes, I utilized the same methodology for each function, making note of
+* when and when not to use the private variables. For createShapes, I used ifstream to access the file.
+* I then used if statements to go through each possible shape to find what the values should be assigned to.
+ * For getArea/Volume, I iterated through each shape using the iterator.
+ *
+ *
+ *
+ *
+ */
+ 
+ 
+ 
+//Base class
+//Please implement Shape's member functions
+//constructor, getName()
+class Shape{
+public:
+        //Base class' constructor should be called in derived classes'
+        //constructor to initizlize Shape's private variable
+       Shape(string name) {//assign name to shape                 
+      name_ = name;
+        }
+       
+       string getName() {//return name
+      return name_;
+        }
+       
+       virtual double getArea() const = 0;
+       virtual double getVolume() const = 0;
+       
+private:
+  string name_;
+ 
+ 
+};
+ 
+//Rectangle
+//Please implement the member functions of Rectangle:
+//constructor, getArea(), getVolume(), operator+, operator-
+ 
+template <class T>
+class Rectangle : public Shape{
+public:
+       Rectangle<T>(T width = 0, T length = 0):Shape("Rectangle") {
+      width_ = width;//assign values
+         length_ = length;
+        }
+       
+       double getArea() const {
+      return length_*width_;//return function for area
+        }
+       
+       double getVolume() const {
+      return 0;
+        }
+       
+        Rectangle<T> operator + (const Rectangle<T>& rec) {
+    Rectangle<T> rect(width_+rec.getWidth(), length_+rec.getLength());//each argument is made of previous arguments added
+         return rect;
+        }
+       
+        Rectangle<T> operator - (const Rectangle<T>& rec) {
+         int x = 0;
+         if(length_-rec.getLength()>0){//only replace if greater than 0
+            x = length_-rec.getLength();
+          }
+ 
+         
+          int y = 0;
+         if(width_-rec.getWidth()>0){
+            y = width_-rec.getWidth();
+          }
+         
+          Rectangle<T> rect(y, x);//assign arguments to return rectangle
+         return rect;
+        }
+       
+        T getWidth() const {
+          return width_;
+        }
+       
+        T getLength() const {
+          return length_;
+        }
+private:
+        T width_;
+    T length_;
+ 
+};
+ 
+//Circle
+//Please implement the member functions of Circle:
+//constructor, getArea(), getVolume(), operator+, operator-
+//@@Insert your code here
+ 
+class Circle : public Shape{
+public:
+       Circle(double radius):Shape("Circle") {
+      radius_ = radius;
+        }
+       
+       double getArea() const{
+      return radius_*radius_*M_PI;
+        }
+       
+       double getVolume() const{
+    return 0;
+        }
+       
+       Circle operator + (const Circle& cir){
+         Circle circ(radius_+cir.getRadius());//same method as rectangle
+         return circ;
+        }
+       
+        Circle operator - (const Circle& cir){
+         int z = 0;
+         if(radius_-cir.getRadius()>0){//same method as rectangle
+            z = radius_-cir.getRadius();
+          }
+         
+          Circle circ(z);
+         return circ;
+        }
+ 
+        double getRadius() const {
+          return radius_;
+        }
+       
+private:
+        double radius_;
+ 
+};
+ 
+ 
+ 
+//Sphere
+//Please implement the member functions of Sphere:
+//constructor, getArea(), getVolume(), operator+, operator-
+//@@Insert your code here
+ 
+class Sphere : public Shape{
+public:
+       Sphere(double radius):Shape("Sphere") {
+      radius_=radius;
+        }
+ 
+       double getVolume() const {
+      return (4.0/3.0)*M_PI*radius_*radius_*radius_;
+        }      
+       
+       double getArea() const {
+      return 4*radius_*radius_*M_PI;
+        }
+ 
+        Sphere operator + (const Sphere& sph) {
+          Sphere sphe(radius_+sph.getRadius());//same method as rectangle
+         return sphe;
+        }
+ 
+        Sphere operator - (const Sphere& sph) {
+         int z = 0;
+         if(radius_-sph.getRadius()>0){
+            z = radius_-sph.getRadius();//same method as rectangle
+          }
+         
+          Sphere shsh(z);
+         return shsh;
+        }
+       
+        double getRadius() const {
+                return radius_;
+        }
+ 
+private:
+        double radius_;
+ 
+};
+ 
+//Rectprism
+//Please implement the member functions of RectPrism:
+//constructor, getArea(), getVolume(), operator+, operator-
+//@@Insert your code here
+class RectPrism : public Shape{
+public:
+       RectPrism(double width, double length, double height):Shape("RectPrism") {
+      width_ = width;
+         length_ = length;
+         height_ = height;
+        }
+       
+       double getVolume() const {
+      return length_*width_*height_;
+        }
+      
+        double getArea() const {
+      return 2*(length_*width_ + length_*height_ + height_*width_);//same method as rectangle
+        }
+       
+        RectPrism operator + (const RectPrism& rectp){
+          RectPrism rectpris(width_+rectp.getWidth(), length_+rectp.getLength(), height_+rectp.getHeight());
+         return rectpris;//same method as rectangle
+        }
+       
+        RectPrism operator - (const RectPrism& rectp){
+         int x = 0;
+         if(length_-rectp.getLength()>0){
+            x = length_-rectp.getLength();
+          }
+         
+          
+          int y = 0;
+         if(width_-rectp.getWidth()>0){
+            y = width_-rectp.getWidth();
+          }
+         
+          int z = 0;
+         if(height_-rectp.getHeight()>0){
+            z = height_-rectp.getHeight();
+          }
+         
+          RectPrism rect(y, x, z);
+         return rect;//same method as rectangle
+        }      
+       
+        double getWidth() const {
+          return width_;
+        }
+       
+        double getLength() const {
+          return length_;
+        }
+       
+        double getHeight() const {
+    return height_;
+        }
+private:
+       double length_;
+       double width_;
+       double height_;
+ 
+};
+ 
+// Read shapes from test.txt and initialize the objects
+// Return a vector of pointers that points to the objects
+ 
+static list<Shape*> CreateShapes(char* file_name) {
+        //@@Insert your code here
+       
+        int size, i;
+ double num1, num2, num3;
+  string name;
+  list<Shape *> v;
+  ifstream ifs (file_name, std::ifstream::in);//open file
+  ifs >> size;//find number of shapes
+ for (i = 0; i < size; i++){//loop through each shape
+    Shape *obj;
+    ifs >> name;//assign name
+    if(name == "Rectangle"){//test if it is rectangle
+      ifs >> num1 >> num2;//assign arguments
+      obj = new Rectangle<double>(num1, num2);//create rectangle and assign it to obj
+    }
+    else if(name == "Circle"){//reeat process
+      ifs >> num1;
+      obj = new Circle(num1);
+    }
+    else if(name == "Sphere"){//repeat process
+      ifs >> num1;
+      obj = new Sphere(num1);
+    }
+    else if(name == "RectPrism"){//repeat process
+      ifs >> num1 >> num2 >> num3;
+      obj = new RectPrism(num1, num2, num3);
+    }
+    v.push_back(obj);//add obj to list
+  }
+ return v;
+       
+}
+ 
+// call getArea() of each object
+// return the max area
+static double MaxArea(list<Shape*> shapes){
+        double max_area = 0;
+ double a = 0;
+ for (list<Shape*>::iterator it =shapes.begin(); it != shapes.end(); it++) {//use iterator to loop through shapes
+    a = (*it)->getArea();
+    if(a>max_area){
+      max_area = a;
+    }
+  }
+ 
+       
+        return max_area;
+}
+ 
+// call getVolume() of each object
+// return the max volume
+static double MaxVolume(list<Shape*> shapes){
+        double max_volume = 0;
+        //@@Insert your code here
+        double a = 0;
+        for (list<Shape*>::iterator it =shapes.begin(); it != shapes.end(); it++) {//use iterator to loop through shapes
+          a = (*it)->getVolume();
+         if(a>max_volume){
+            max_volume = a;
+          }
+        }
+       
+        return max_volume;
+}
+#endif
