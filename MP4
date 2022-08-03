@@ -1,0 +1,62 @@
+#include <stdlib.h>
+#include <stdio.h>
+/*Errors:
+*1. There was an error which caused 2 to be skipped in the for loop of is_prime. This resulted in if the input was 2, the output would
+* incorrectly be 0.
+*2. In Print_semiprimes, k should be set to i/j not i%j. If k is set to i%j then k will be set to zero every time that line is encountered.
+*3. In print_semiprimes did not update return value of ret to 1 when semiprime found which led to return value of 0 everytime
+*4. In is_prime needed to switch return values for two scenarios. This resulted in returning 0 and 1 in opposite cases.
+*5. In print_semiprimes needed to add break function or else numbers would print multiple times since they would keep going through for loop.
+*/
+ 
+/*
+* is_prime: determines whether the provided number is prime or not
+* Input    : a number
+* Return   : 0 if the number is not prime, else 1
+*/
+int is_prime(int number)
+{
+    int i;
+    if (number == 1) {return 0;}
+    else if (number == 2) {return 1;}
+    else{
+      for (i = 2; i < number; i++) { //for each number smaller than it
+        if (number % i == 0) { //check if the remainder is 0
+            return 0;
+        }
+      }
+      return 1;
+    }
+}
+ 
+ 
+/*
+* print_semiprimes: prints all semiprimes in [a,b] (including a, b).
+* Input   : a, b (a should be smaller than or equal to b)
+* Return  : 0 if there is no semiprime in [a,b], else 1
+*/
+int print_semiprimes(int a, int b)
+{
+    int i, j, k;
+    int ret = 0;
+    for (i = a; i <=b; i++) { //for each item in interval
+        //check if semiprime
+        for (j = 2; j <= i; j++) {
+            if (i%j == 0) {
+                if (is_prime(j)) {
+                    k = i/j;
+                    if (is_prime(k)) {
+                        printf("%d ", i);
+                       ret = 1;
+                       break;
+                    }
+                }
+            }
+        }
+ 
+    }
+    printf("\n");
+    return ret;
+ 
+}
+ 
