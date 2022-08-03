@@ -1,0 +1,432 @@
+.ORIG x3000
+       
+;your code goes here
+ 
+NEXT_CHAR                            ; loops to retrieve next character from keyboard
+ 
+GETC                                 ; retrieve next character from keyboard
+OUT                                          ; print value inputted into keyboard
+AND R2,R2,#0                  ; initialize R2 to a value of 0
+LD R2,NEG_EQUAL_VAL          ; load comparative value into R2
+ADD R2,R0,R2                  ; checks if R0 is "="
+BRz EQUAL_FOUND                      ; if "=" then branch to EQUAL_FOUND
+AND R2,R2,#0                  ; reset R2 to zero
+ADD R2,R2,#-15                ; subtract a value of 15 from R2
+ADD R2,R2,#-15                ; subtract a value of 15 from R2
+ADD R2,R2,#-2                 ; subtract a value of 2 from R2
+ADD R2,R2,R0                  ; checks if R0 is " "
+BRz NEXT_CHAR                 ; get next character if current character is "space"
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,TIMES_VAL                      ; loads decimal value of -42 into R2
+ADD R2,R2,R0                  ; see if R0=42
+BRz CONTINUE                  ; if R0=42, branch to CONTINUE
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,TIMES_VAL                      ; loads decimal value of -42 into R2
+ADD R2,R2,#-1                 ; subtract value of 1 from R2
+ADD R2,R2,R0                  ; see if R0=43
+BRz CONTINUE                  ; if R0=43, branch to CONTINUE
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,TIMES_VAL                      ; loads decimal value of -42 into R2
+ADD R2,R2,#-3                 ; subtract value of 3 from R2
+ADD R2,R2,R0                  ; see if R0=45
+BRz CONTINUE                  ; if R0=45, branch to CONTINUE
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,TIMES_VAL                      ; loads decimal value of -42 into R2
+ADD R2,R2,#-5                 ; subtract value of 5 from R2
+ADD R2,R2,R0                  ; see if R0=47
+BRz CONTINUE                  ; if R0=47, branch to CONTINUE
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,TIMES_VAL                      ; loads decimal value of -42 into R2
+ADD R2,R2,#-15                ; subtract value of 15 from R2
+ADD R2,R2,#-15                ; subtract value of 15 from R2
+ADD R2,R2,#-12                ; subtract value of 12 from R2
+ADD R2,R2,#-10                ; subtract value of 10 from R2
+ADD R2,R2,R0                  ; see if R0=94
+BRz CONTINUE                  ; if R0=94, branch to CONTINUE
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,ZERO_VAL                ; loads decimal value of -48 into R2
+ADD R2,R2,R0                  ; compares R2 to ascii value of 0
+BRn INVALID_FOUND             ; if R0 is too small to be an operand, Branch to INVALID_FOUND
+AND R2,R2,#0                  ; reset R2 to zero
+LD R2,ZERO_VAL                ; loads decimal value of -48 into R2
+ADD R2,R2,#-9                 ; subtract value of 9 from R2
+ADD R2,R2,R0                  ; compares R2 to ascii value of 9
+BRp INVALID_FOUND             ; if R0 is too big to be an operand, Branch to INVALID_FOUND
+BRnzp CONTINUE                ; if not invalid, branch to CONTINUE
+ 
+ 
+CONTINUE                             ; start of branch CONTINUE
+LD R2,ZERO_VAL                ; loads decimal value of -48 into R2               
+ADD R2,R2,R0                  ; stores sum of R2 AND R0 in R2
+BRn OPERATOR                  ; branch to OPERAND
+LD R2,ZERO_VAL                ; loads decimal value of -48 into R2
+ADD R2,R2,#-9                 ; subtracts 9 from R2
+ADD R2,R2,R0                  ; stores sum of R2 AND R0 in R2
+BRp OPERATOR                  ; branch to OPERAND
+AND R2,R2,#0                  ; sets value of R2 to 0
+LD R2,ZERO_VAL                ; loads decimal value of -48 into R2
+ADD R0,R0,R2                  ; stores sum of R2 AND R0 in R0
+JSR PUSH                             ; sjump to PUSH subroutine (push operand)
+BRnzp NEXT_CHAR                      ; loop to get next character
+ 
+OPERATOR                             ; start of OPERATOR branch
+AND R1,R1,#0                  ; sets R1 to value of 0
+ADD R1,R1,R0                  ; store value of R0 in R1
+JSR POP                              ; jump to POP subroutine
+AND R3,R3,#0                  ; sets R3 to value of 0
+ADD R3,R3,R0                  ; store R0 in R3
+JSR POP                              ; jump to POP subroutine
+AND R4,R4,#0                  ; sets R4 to value of 0
+ADD R4,R4,R0                  ; store R0 in R4
+ADD R5,R5,#-1                 ; check for underflow
+BRz INVALID_FOUND             ; branch to INVALID_FOUND if underflow detected
+AND R0,R0,#0                  ; sets R0 to value of 0
+ADD R0,R1,R0                  ; return original R0 value back to register
+JSR EVALUATE                  ; jump to EVALUATE subroutine
+JSR PUSH                             ; jump to PUSH subroutine
+BRnzp NEXT_CHAR                      ; loop to retrieve next character
+ 
+ 
+ 
+EQUAL_FOUND                          ; branch location of EQUAL_FOUND
+AND R1,R1,#0                  ; sets R1 to value of 0
+AND R2,R2,#0                  ; sets R2 to value of 0
+LD R1,STACK_START             ; load STACK_START into R1
+NOT R1,R1                            ; invert R1
+ADD R1,R1,#1                  ; add one to get compliment
+LD R2,STACK_TOP                      ; load STACK_TOP into R2
+ADD R1,R2,R1                  ; compare STACK_TOP and STACK_START
+ADD R1,R1,#1                  ; add one to see if underflow
+BRnp INVALID_FOUND           ; if underflow, jump to invalid expression
+AND R5,R5,#0                  ; sets R5 to value of 0
+AND R3,R3,#0                  ; sets R3 to value of 0
+ST R5,SAVE_R5                 ; save value of R5
+JSR POP                              ; jump to POP subroutine
+LD R5,SAVE_R5                 ; load saved value of R5
+ADD R5,R5,R0                  ; place R0 value in R5
+AND R3,R3,#0                  ; sets R3 to value of 0
+ADD R3,R3,R0                  ; place R0 value in R3
+ST R5,SAVE_R5                 ; save value of R5
+JSR PRINT_HEX                 ; jump to PRINT_HEX subroutine
+LD R5,SAVE_R5                 ; load saved value of R5
+BRnzp DONE                           ; branch to DONE
+ 
+INVALID_FOUND
+AND R0,R0,#0                  ; sets R0 to value of 0
+AND R2,R2,#0                  ; sets R2 to value of 0
+LD R2,THIRONE
+ADD R0,R0,R2                  ; add to store ascii value of 73 in R0
+ADD R0,R0,R2                  ; add to store ascii value of 73 in R0
+ADD R0,R0,#11                 ; ascii value of 73
+OUT                                          ; print "I"
+ADD R0,R0,R2                  ; add to store ascii value of "n" in R0
+ADD R0,R0,#6                  ; add to store ascii value of "n" in R0
+OUT                                          ; print "n"
+ADD R0,R0,#8                  ; add to store ascii value of "v" in R0
+OUT                                          ; print "v"
+ADD R0,R0,#-14                ; subtract to store ascii value of "a" in R0
+ADD R0,R0,#-7                 ; subtract to store ascii value of "a" in R0
+OUT                                          ; print "a"
+ADD R0,R0,#11                 ; add to store ascii value of "a" in R0
+OUT                                          ; print "l"
+ADD R0,R0,#-3                 ; subtract to store ascii value of "l" in R0
+OUT                                          ; print "i"
+ADD R0,R0,#-5                 ; subtract to store ascii value of "d" in R0
+OUT                                          ; print "d"
+AND R0,R0,#0                  ; reset value of R0 to 0
+ADD R0,R0,R2                  ; add to store ascii value of " " in R0
+ADD R0,R0,#1                  ; add to store ascii value of " " in R0
+OUT                                          ; print " "
+ADD R0,R0,R2                  ; add to store ascii value of "E" in R0
+ADD R0,R0,#6                  ; add to store ascii value of "E" in R0
+OUT                                          ; print "E"
+ADD R0,R0,R2                  ; add to store ascii value of "x" in R0
+ADD R0,R0,#10                 ; add to store ascii value of "x" in R0
+ADD R0,R0,#10                 ; add to store ascii value of "x" in R0
+OUT                                          ; print "x"
+ADD R0,R0,#-8                 ; subtract to store ascii value of "p" in R0
+OUT                                          ; print "p"
+ADD R0,R0,#2                  ; add to store ascii value of "r" in R0
+OUT                                          ; print "r"
+ADD R0,R0,#-13                ; subtract to store ascii value of "e" in R0
+OUT                                          ; print "e"
+ADD R0,R0,#14                 ; add to store ascii value of "s" in R0
+OUT                                          ; print "s"
+OUT                                          ; print "s"
+ADD R0,R0,#-10                ; subtract to store ascii value of "I" in R0
+OUT                                          ; print "i"
+ADD R0,R0,#6                  ; add to store ascii value of "o" in R0
+OUT                                          ; print "o"
+ADD R0,R0,#-1                 ; subtract to store ascii value of "N" in R0
+OUT                                          ; print "n"
+BRnzp DONE                           ; branch to DONE
+ 
+       
+DONE                                 ; branch location DONE
+HALT                                 ; HALT program
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;R3- value to print in hexadecimal
+PRINT_HEX
+ 
+AND R2,R2,#0                  ; sets value of R2 to 0
+ADD R2,R2,#4                  ; set counter to 4
+PRINT_NEX_NUM                 ; loop to print next character in hex value
+AND R1,R1,#0                  ; sets R1 to 0
+AND R4,R4,#0                  ; initialize R4 to a value of 0
+ADD R4,R4,#4                  ; set counter R4 to 4
+ 
+NEXT_BIT                             ; start of loop to place first Hex value into R5
+ADD R1,R1,R1                  ; left shift R1 one bit
+AND R6,R6,#0                  ; initialize R6 to a value of 0
+AND R6,R3,R3                  ; set R6 equal to R3 to set condition codes
+BRzp SKIP                            ; branch to SKIP if there is not a 1
+ADD R1,R1,#1                  ; add value of 1 to R1
+SKIP                                 ; branch location to skip incrementing R1
+ADD R3,R3,R3                  ; left shift R3 one bit
+ADD R4,R4,#-1                 ; decrement counter R4 by 1
+BRz PRINT_VALUE                      ; if counter at zero print the hex value
+BRnzp NEXT_BIT                ; otherwise continue to calculate R1
+ 
+PRINT_VALUE                          ; start of printing hex value
+ 
+AND R6,R6,#0                  ; intitialize R6 to a value of 0
+ADD R6,R1,#-9                 ; test to see if hex value is larger than 9
+BRnz NEXT                            ; if smaller than 9 then branch to next
+ADD R6,R6,#7                  ; add ascii value of 7 if hex value greater then 9
+NEXT                                 ; branch location skipping alteration of ascii value
+ADD R6,R6,#9                  ; reinserting the previously subtracted 9 from the ascii value
+ADD R6,R6,#15                 ; adding 15 to R6 to convert hex to ascii
+ADD R6,R6,#15                 ; adding 15 to R6 to convert hex to ascii
+ADD R6,R6,#15                 ; adding 15 to R6 to convert hex to ascii
+ADD R6,R6,#3                  ; adding 3 to R6 to convert hex to ascii
+AND R0,R0,#0                  ; intitialize R0 to a value of 0
+ADD R0,R0,R6                  ; place ascii value from R6 into R0
+ST R7,SAVE_R7                 ; store value of R7
+OUT                                          ; print value to monitor
+LD R7,SAVE_R7                 ; load save PC value into R7
+AND R1,R1,#0                  ; intitialize R1 to a value of 0
+ADD R2,R2,#-1                 ; decrement R2 counter by 1
+BRp PRINT_NEX_NUM             ; if counter is positive then loop
+ 
+RET                                          ; return from subroutine
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;R0 - character input from keyboard
+;R6 - current numerical output
+;
+;
+EVALUATE                             ; start of EVALUATE subroutine
+ 
+;your code goes here
+LD R2,TIMES_VAL                      ; load value of -42 into R2
+ADD R2,R2,R0                  ; compare R0 to ascii value of "*"
+BRz EV_MULT                          ; if R0 is "*" branch to EV_MULT
+LD R2,TIMES_VAL                      ; load value of -42 into R2
+ADD R2,R2,#-1                 ; subtract value of 1 from R2
+ADD R2,R2,R0                  ; compare R0 to ascii value of "+"
+BRz EV_PLUS                          ; if R0 is "+" branch to EV_PLUS
+LD R2,TIMES_VAL                      ; load value of -42 into R2
+ADD R2,R2,#-3                 ; subtract value of 3 from R2
+ADD R2,R2,R0                  ; compare R0 to ascii value of "-"
+BRz EV_MINUS                  ; if R0 is "-" branch to EV_MIN
+LD R2,TIMES_VAL                      ; load value of -42 into R2
+ADD R2,R2,#-5                 ; subtract value of 5 from R2
+ADD R2,R2,R0                  ; compare R0 to ascii value of "/"
+BRz EV_DIVIDE                 ; if R0 is "/" branch to EV_DIVIDE
+LD R2,TIMES_VAL                      ; load value of -42 into R2
+ADD R2,R2,#-15                ; subtract value of 15 from R2
+ADD R2,R2,#-15                ; subtract value of 15 from R2
+ADD R2,R2,#-12                ; subtract value of 12 from R2
+ADD R2,R2,#-10                ; subtract value of 10 from R2
+ADD R2,R2,R0                  ; compare R0 to ascii value of "^"
+BRz EV_POWER                  ; if R0 is "^" branch to EV_POWER
+ 
+EV_MULT                              ; start of branch EV_MULT
+ST R7,SAVE_R7                 ; save PC value in SAVE_R7
+JSR MUL                              ; jump to MUL subroutine
+LD R7,SAVE_R7                 ; load PC value from SAVE_R7 into R7
+RET                                          ; return from subroutine
+ 
+EV_PLUS                              ; start of branch EV_PLUS
+ST R7,SAVE_R7                 ; save PC value in SAVE_R7
+JSR PLUS                                     ; jump to PLUS subroutine
+LD R7,SAVE_R7                 ; load PC value from SAVE_R7 into R7
+RET                                          ; return from subroutine
+ 
+EV_MINUS                             ; start of branch EV_MINUS
+ST R7,SAVE_R7                 ; save PC value in SAVE_R7
+JSR MIN                              ; jump to MIN subroutine
+LD R7,SAVE_R7                 ; load PC value from SAVE_R7 into R7
+RET                                          ; return from subroutine
+ 
+EV_DIVIDE                            ; start of branch EV_DIVIDE
+ST R7,SAVE_R7                 ; save PC value in SAVE_R7
+JSR DIV                              ; jump to DIV subroutine
+LD R7,SAVE_R7                 ; load PC value from SAVE_R7 into R7
+RET                                          ; return from subroutine
+ 
+EV_POWER                             ; start of branch EV_POWER
+ST R7,SAVE_R7                 ; save PC value in SAVE_R7
+JSR EXP                              ; jump to EXP subroutine
+LD R7,SAVE_R7                 ; load PC value from SAVE_R7 into R7
+RET                                          ; return from subroutine
+ 
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;input R3, R4
+;out R0
+PLUS                                 ; start of PLUS subroutine  
+;your code goes here
+ADD R0,R3,R4                  ; stores sum of R3 and R4 in R0
+RET                                          ; return from subroutine
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;input R3, R4 (R4-R3)
+;out R0
+MIN                                          ; start of MIN subroutine
+;your code goes here
+NOT R3,R3                            ; takes NOT of R3 as first step of compliemnting R3
+ADD R3,R3,#1                  ; adds 1 to R3 to complete complimenting of R3
+ADD R0,R3,R4                  ; adds R3 and R4 and stores result in R0
+RET                                          ; return from subroutine
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;input R3, R4
+;out R0
+MUL                                          ; start of MUL subroutine
+;your code goes here
+AND R0,R0,#0                  ; set value of R0 to 0
+LOOP_MUL                             ; loop to multiply
+ADD R0,R0,R3                  ; add R3 to R0
+ADD R4,R4,#-1                 ; decrement counter
+BRp LOOP_MUL                  ; loop back if counter is still positive
+RET                                          ; return from subroutine
+       
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;input R3, R4 (R4/R3)
+;out R0
+DIV                                          ; start of DIV subroutine
+;your code goes here
+AND R0,R0,#0                  ; set value of R0 to 0
+ADD R0,R0,#-1                 ; decrease value of R0 by 1
+NOT R3,R3                            ; takes NOT of R3 as first step of compliemnting R3
+ADD R3,R3,#1                  ; adds 1 to R3 to complete complimenting of R3
+LOOP_DIV                             ; loop for division
+ADD R0,R0,#1                  ; add 1 to R0
+ADD R4,R3,R4                  ; adds R3 and R4 and stores result in R4
+BRzp LOOP_DIV                 ; loop back to complete division until value is negative
+RET                                          ; return from subroutine
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;input R3, R4 (R4^R3)
+;out R0
+EXP                                          ; start of EXP subroutine
+;your code goes here
+ 
+AND R0,R0,#0                  ; set value of R0 to 0
+AND R2,R2,#0                  ; set value of R2 to 0
+ADD R2,R2,R4                  ; place value of R4 input into R2
+AND R5,R5,#0                  ; set value of R5 to 0
+ADD R5,R5,R4                  ; place value of R4 input into R5
+ADD R3,R3,#-1                 ; decrement R3 input as counter
+BRz FIN                              ; branhc to FIN if zero
+LOOP_EXP                             ; loop for completing exponential
+AND R0,R0,#0                  ; set value of R0 to 0
+EXLOOP_MUL                           ; loop for multiplication within multiplication
+ADD R0,R0,R4                  ; add R4 value to R0
+ADD R2,R2,#-1                 ; decrement R2 counter
+BRp EXLOOP_MUL                ; loop back to finish multiplication
+AND R4,R4,#0                  ; set value of R4 to 0
+ADD R4,R0,R4                  ; set value of R4 to new R0 value
+AND R2,R2,#0                  ; set value of R2 to 0
+ADD R2,R2,R5                  ; set R2 value back to original counter value
+ADD R3,R3,#-1                 ; decrement R3 input counter
+BRp LOOP_EXP                  ; loop back to finish exponential if positive
+BRnzp FIN                            ; else branch to FIN
+ 
+FIN                                          ; branch location FIN
+ 
+RET                                          ; return from subroutine
+ 
+ 
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+NEG_EQUAL_VAL .FILL xFFC3    ; decimal value -61
+THIRONE .FILL x001F          ; decimal value 31
+TIMES_VAL .FILL xFFD6                ; decimal value 42
+ZERO_VAL .FILL xFFD0         ; decimal value -48
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
+ 
+;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
+;R3: STACK_END R4: STACK_TOP
+;
+PUSH                                 ; start of PUSH subroutine
+        ST R3, PUSH_SaveR3    ;save R3
+        ST R4, PUSH_SaveR4    ;save R4
+        AND R5, R5, #0        ;set R5 to value of 0
+        LD R3, STACK_END      ;load value of STACK_END to R3
+        LD R4, STACk_TOP      ;load value of STACK_TOP to R4
+        ADD R3, R3, #-1               ;decrement R3
+        NOT R3, R3                    ;compliment R3
+        ADD R3, R3, #1        ;add 1 to R3 to finish compliment
+        ADD R3, R3, R4        ;add R3 and R4 and store sum in R3
+        BRz OVERFLOW          ;stack is full
+        STR R0, R4, #0        ;no overflow, store value in the stack
+        ADD R4, R4, #-1               ;move top of the stack
+        ST R4, STACK_TOP      ;store top of stack pointer
+        BRnzp DONE_PUSH               ;branch to DONE_PUSH
+OVERFLOW                             ;branch location of OVERFLOW
+        ADD R5, R5, #1        ;set R5 to 1 if overflow
+DONE_PUSH                            ;branch location of DONE_PUSH
+        LD R3, PUSH_SaveR3    ;load R3 value back into register
+        LD R4, PUSH_SaveR4    ;load R4 value back into register
+        RET                                  ; return from subroutine
+ 
+ 
+PUSH_SaveR3    .BLKW #1       ;block address to store PUSH_SaveR3
+PUSH_SaveR4    .BLKW #1       ;block address to store PUSH_SaveR4
+ 
+ 
+;OUT: R0, OUT R5 (0-success, 1-fail/underflow)
+;R3 STACK_START R4 STACK_TOP
+;
+POP                                          ; start of POP subroutine
+        ST R3, POP_SaveR3     ;save R3
+        ST R4, POP_SaveR4     ;save R3
+        AND R5, R5, #0        ;clear R5
+        LD R3, STACK_START    ;load value of STACK_END to R3
+        LD R4, STACK_TOP      ;load value of STACK_TOP to R4
+        NOT R3, R3                    ;decrement R3
+        ADD R3, R3, #1        ;compliment R3
+        ADD R3, R3, R4        ;add 1 to complete compliment
+        BRz UNDERFLOW         ;branch to UNDERFLOW if value is zero
+        ADD R4, R4, #1        ;increment R4
+        LDR R0, R4, #0        ;load memory at address stored in R4 into R0
+        ST R4, STACK_TOP      ;store STACK_TOP in address in R4
+        BRnzp DONE_POP        ;branch to DONE_POP
+UNDERFLOW                            ;branch location of UNDERFLOW
+        ADD R5, R5, #1        ;set R5 to 1 if underflow
+DONE_POP                             ;branch location of DONE_POP
+        LD R3, POP_SaveR3     ;load R3 value back into register
+        LD R4, POP_SaveR4     ;load R4 value back into register
+        RET                                  ; return from subroutine
+ 
+ 
+POP_SaveR3     .BLKW #1       ; block one address to store POP_SAVER3
+POP_SaveR4     .BLKW #1       ; block one address to store POP_SAVER4
+Save_R3 .BLKW #1              ; block one address to store SAVE_R3
+Save_R4 .BLKW #1              ; block one address to store SAVE_R4
+Save_R5 .BLKW #1              ; block one address to store SAVE_R5
+Save_R7 .BLKW #1              ; block one address to store SAVE_R7
+STACK_END      .FILL x3FF0    ; store address of STACK_END
+STACK_START    .FILL x4000    ; store address of STACK_START
+STACK_TOP      .FILL x4000    ; store address of STACK_TOP
+ 
+ 
+ 
+ 
+.END                                 ; end of program
+ 
+ 
