@@ -1,0 +1,136 @@
+/*Name: anurag ray chowdhury
+*Netid: anuragr3
+*Partner: ajshore2
+*
+*Intro Paragraph:
+*For this MP, I had different methods for each function. First, for countLiveNeighbor, I used the layout from
+*the course wiki. Specifically, I went through each row and col 1 away from the test location and made sure that
+*this new location was within the array boundaries. I then tested if it was live and incremented a counter
+*if it was. I returned this counter after going through each neighbor. Secondly, for the function updateBoard, I created a
+*new board (new_bd) to copy the values of board. I then looped through each row and col of the new board and used the countLiveNeighbor
+*function to determine its live neighbor count. I used this to determine if that cell will remain alive or dead in the next round.
+ *I went through and did this for each location in the new board. After this loop, I then made a new loop, going through each
+*index of board and copying the new value from new_bd. Finally, for the function aliveStable, I began by creating a test board identical to
+*board using the same method as the previous function. I performed
+*updateBoard on this array and then compared the values to the current board while simultaneously checking if each cell was alive or dead.
+*If there were no live cells found on the current board, then I returned 1.
+ *I did this by looping through every index in board[]. I used a variable to track if there were differences between the boards and incremented
+*it when a difference was found. I used this to return either 1 or 0 depending on if it was different or not.
+ *
+*/
+ 
+ 
+ 
+ 
+/*
+* countLiveNeighbor
+* Inputs:
+* board: 1-D array of the current game board. 1 represents a live cell.
+* 0 represents a dead cell
+* boardRowSize: the number of rows on the game board.
+* boardColSize: the number of cols on the game board.
+* row: the row of the cell that needs to count alive neighbors.
+* col: the col of the cell that needs to count alive neighbors.
+* Output:
+* return the number of alive neighbors. There are at most eight neighbors.
+* Pay attention for the edge and corner cells, they have less neighbors.
+*/
+ 
+int countLiveNeighbor(int* board, int boardRowSize, int boardColSize, int row, int col){
+ int num_live = 0; //initialize integer to count number of live neighbors
+ int i; //initialize integer to keep track of current row
+ int j; //initialize integer to keep track of current col
+ for(i = row-1; i<=row+1; i++){ //loop from one row to left to one row to the right
+    if((i>=0) && i<boardRowSize){ // check if current row is in boundaries of the array
+      for(j = col-1; j<=col+1; j++){ //loop from one col up to one col down
+        if((j>=0) && j<boardColSize){ //check if current col is in boundaries of the array
+         if(i!=row || j!=col){ // make sure current row and col isn't the spot you are finding neighbors for
+            if(board[i*boardColSize+j]==1){ //check if neighbor is live
+              num_live++; // if alive increment number of live neighbors
+             }
+          }
+        }
+      }
+    }
+  }
+ return num_live; // return number of live neighbors
+}
+ 
+ 
+/*
+* Update the game board to the next step.
+* Input:
+ * board: 1-D array of the current game board. 1 represents a live cell.
+* 0 represents a dead cell
+* boardRowSize: the number of rows on the game board.
+* boardColSize: the number of cols on the game board.
+* Output: board is updated with new values for next step.
+*/
+void updateBoard(int* board, int boardRowSize, int boardColSize) {
+ 
+ int a; //initialize int to track row
+ int b; //initialize int to track col
+ int w; // initialize int to track index of array
+ int num; //initialize value to temporarily hold the number of live neighbors
+ int new_bd[boardRowSize*boardColSize]; //initialize array to hold new values for board[]
+ for(a = 0; a<=boardRowSize-1; a++){ //loop through each row
+    for(b = 0; b<=boardColSize-1; b++){ //loop through each col
+      num = countLiveNeighbor(board, boardRowSize, boardColSize, a, b); // find number of live neighbors at spot
+      if(board[boardColSize*a+b]==1 && num==2){ //if alive and neighbors are two then stays alive
+        new_bd[boardColSize*a+b] = 1; // set future value to live
+      }
+      else if(num==3){ //if live neighbors is 3
+        new_bd[boardColSize*a+b] = 1; //set future value to live
+      }
+      else{ //any other situation
+        new_bd[boardColSize*a+b] = 0; // set future value to dead
+      }
+    }
+  }
+ for(w=0; w<=boardRowSize*boardColSize-1; w++){ //for each index in board
+    board[w]=new_bd[w]; // set value at each index of board to new value held in new_bd[]
+  }
+}
+ 
+/*
+* aliveStable
+* Checks if the alive cells stay the same for next step
+* board: 1-D array of the current game board. 1 represents a live cell.
+* 0 represents a dead cell
+* boardRowSize: the number of rows on the game board.
+* boardColSize: the number of cols on the game board.
+* Output: return 1 if the alive cells for next step is exactly the same with
+ * current step or there is no alive cells at all.
+* return 0 if the alive cells change for the next step.
+*/
+int aliveStable(int* board, int boardRowSize, int boardColSize){
+ int test_bd[boardRowSize*boardColSize]; //initialize new array to compare updated board with current board
+ int n = 0; //initialize int to loop through array index
+ int num_lc = 0; //initialize int to track if board has live cells
+ for(n=0; n<=boardRowSize*boardColSize-1; n++){ //loop through each index in array
+    test_bd[n] = board[n]; //set test board value at index n to value of board at index n
+    if(board[n] == 1){ //test if cell is alive
+      num_lc++; // increment count if cell is alive
+    }
+  }
+ if(num_lc == 0){ //if there are no live cells on board
+    return 1; //return 1 to show no live cells on board
+  }
+ updateBoard(test_bd, boardRowSize, boardColSize); //update the test board to retrieve future board
+ int track = 0; //initialize int to track changes between boards
+ int m = 0; // initialize int to loop through index of arrays
+ for(m=0; m<=boardRowSize*boardColSize-1; m++){ // for each index in test board
+    if(test_bd[m] != board[m]){ //if values at index m are different in test_bd and board
+      track++; // increment counter that tracks the differences
+    }
+  }
+ if(track>0){ //if greater than 0 cells are different
+    return 0; // return 0 to show that boards are different
+  }
+ else{ //if no differences
+    return 1; //return 1 to show that boards are identical
+  }
+ 
+ 
+ 
+}
